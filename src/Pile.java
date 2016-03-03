@@ -5,18 +5,15 @@ import java.util.Collection;
  * asd
  */
 
-public class Pile<T> {
+public class Pile {
 
     private int size;
     private Node headNode;
-
-
 
     public Pile() {
         headNode = null;
         size = 0;
     }
-
 
     public boolean add(Node newEntry) {
         boolean nodeAdded = false;
@@ -35,7 +32,14 @@ public class Pile<T> {
     }
 
     public boolean add(Node newEntry, int index) {
-        //adds to specific index
+        Node currNode = headNode;
+        Node prevNode = null;
+        for (int i = 0; i < index; i++) {
+            prevNode = currNode;
+            currNode = currNode.getNext();
+        }
+        newEntry.setNext(currNode);
+        prevNode.setNext(newEntry);
         return true;
     }
 
@@ -53,25 +57,38 @@ public class Pile<T> {
 
     public Node remove() {
         //remove from end LOL420
-        if (size == 1) {
-            Node entry = headNode;
-            headNode.setNext(null);
-            size--;
+        Node last = null;
+        if (size > 0) {
+            Node currNode = headNode;
+            last = getLast();
+            while (!currNode.getNext().equals(last)) {
+                currNode = currNode.getNext();
+            }
+            currNode.setNext(null);
         }
-        return null;
+        return last;
     }
 
     public boolean addAll(Collection<? extends Node> collection) {
         //appends all elements in the collection to the end of the list in order of collections specified iterator
-        return true;
+        boolean addedCollection = false;
+        if (collection.size() > 0) {
+            for (Node n : collection) {
+                this.add(n);
+            }
+            addedCollection = true;
+        }
+        return addedCollection;
     }
 
     public void clear() {
         //Removed all elements from the list
+        headNode.setNext(null);
+        size = 0;
     }
 
     public Node getLast() {
-        Node currNode = new Node(headNode, null);
+        Node currNode = headNode;
         while (!currNode.getNext().equals(null)) {
             currNode = currNode.getNext();
         }
@@ -81,7 +98,12 @@ public class Pile<T> {
     @Override
     public String toString() {
         //printable version of the 'Pile' object
-        return null;
+        String pileString = "";
+        Node currNode = headNode;
+        while (!currNode.getNext().equals(null)) {
+            pileString += " Node (Data: " + currNode.getData() + ", Next: " + currNode.getNext() + ")";
+            currNode = currNode.getNext();
+        }
+        return pileString;
     }
-
 }
