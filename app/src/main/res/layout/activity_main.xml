@@ -22,8 +22,8 @@
 
                 <ImageView
                     android:id="@+id/imgChips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/chips" />
 
                 <TextView
@@ -215,44 +215,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
                     android:text="Surrender" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <Button
-                    android:id="@+id/btnExit"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="50"
-                    android:text="Click to Exit" />
-
-                <Button
-                    android:id="@+id/btnHelp"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="50"
-                    android:text="How to Play" />
-
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity = "center">
-
-                <Button
-                    android:id="@+id/btnChallenge"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Challenge A Friend"/>
-
             </LinearLayout>
 
             <LinearLayout

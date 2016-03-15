@@ -1,5 +1,9 @@
+package gurbirkalsi.blackjacksimulation;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import gurbirkalsi.blackjacksimulation.Card;
 
 /**
  * Created by jamessalvatore on 3/2/16.

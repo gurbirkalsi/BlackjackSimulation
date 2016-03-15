@@ -1,10 +1,15 @@
+package gurbirkalsi.blackjacksimulation;
+
 import java.util.Random;
+
+import gurbirkalsi.blackjacksimulation.Card;
+import gurbirkalsi.blackjacksimulation.Pile;
 
 /**
  * Created by jamessalvatore on 3/3/16.
  * asd
  */
-public class Deck extends Pile{
+public class Deck extends Pile {
 
     private String[] cardSuits = {"Hearts", "Diamonds", "Spades", "Clovers"}; // Card suits for a traditional deck
 

@@ -1,3 +1,7 @@
+package gurbirkalsi.blackjacksimulation;
+
+import gurbirkalsi.blackjacksimulation.Card;
+
 /**
  * Created by KapetanopoulosEli on 3/3/2016.
  */

@@ -1,8 +1,10 @@
+package gurbirkalsi.blackjacksimulation;
+
 /**
- * Hand class yay
+ * Hand class
  */
 
-public class Hand extends Pile{
+public class Hand extends Pile {
 
     public Hand() {
         //default constructor
