@@ -2,9 +2,6 @@ package gurbirkalsi.blackjacksimulation;
 
 import java.util.Random;
 
-import gurbirkalsi.blackjacksimulation.Card;
-import gurbirkalsi.blackjacksimulation.Pile;
-
 /**
  * Created by jamessalvatore on 3/3/16.
  * asd
@@ -52,7 +49,7 @@ public class Deck extends Pile {
             Card currentTopOfDeck = (Card)this.removeTop();
             Hand playerHand = player.getHand();
             playerHand.add(currentTopOfDeck);
-            player.updateScore();
+            player.updateMoney();
         }
     }
 

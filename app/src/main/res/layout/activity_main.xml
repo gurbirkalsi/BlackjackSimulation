@@ -209,12 +209,6 @@
                     android:layout_weight=".4"
                     android:text="Stand" />
 
-                <Button
-                    android:id="@+id/btnSurrender"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Surrender" />
             </LinearLayout>
 
             <LinearLayout

@@ -59,6 +59,12 @@ public class Pile implements ListInterface{
         //iterator = new DoublyLinkedIterator();
     }
 
+    public Pile(int numCards) {
+        topCard = null;
+        bottomCard = null;
+        this.numCards = numCards;
+    }
+
 
     @Override
     public boolean add(Object newEntry) {

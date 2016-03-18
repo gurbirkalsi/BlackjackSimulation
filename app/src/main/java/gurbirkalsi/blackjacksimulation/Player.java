@@ -1,7 +1,5 @@
 package gurbirkalsi.blackjacksimulation;
 
-import gurbirkalsi.blackjacksimulation.Card;
-
 /**
  * Created by KapetanopoulosEli on 3/3/2016.
  */
@@ -9,7 +7,7 @@ public class Player {
 
     private String name;
     private Hand hand;
-    private int score;
+    private int money;
 
     public Player()
     {
@@ -20,7 +18,7 @@ public class Player {
     {
         //overloaded constructor
         this.name = newName;
-        score = 0;
+        money = 0;
         hand = new Hand();
     }
 
@@ -32,17 +30,17 @@ public class Player {
         this.name = name;
     }
 
-    public int getScore() {
-        return score;
+    public int getMoney() {
+        return money;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setMoney(int money) {
+        this.money = money;
     }
 
-    public void updateScore() {
+    public void updateMoney() {
         Card newlyAdded = getHand().getTopCard();
-        setScore(getScore()+newlyAdded.getFace().getCardValue());
+        setMoney(getMoney() + newlyAdded.getFace().getCardValue());
     }
 
     public Hand getHand() {
@@ -58,7 +56,7 @@ public class Player {
         return "Player{" +
                 "name = '" + name + '\'' +
                 ", hand = " + hand +
-                ", score = " + score +
+                ", money = " + money +
                 '}';
     }
 
@@ -69,12 +67,12 @@ public class Player {
         System.out.println("");
         System.out.println("--------END TEST--------\n");
 
-        System.out.println("Test 2: Add Cards & Update Score\n");
+        System.out.println("Test 2: Add Cards & Update Money\n");
         player1.getHand().add(new Card(Card.Face.Ace, "Spades", null, null));
-        player1.updateScore();
+        player1.updateMoney();
         System.out.println(player1 + "\n");
         player1.getHand().add(new Card(Card.Face.Seven, "Hearts", null, null));
-        player1.updateScore();
+        player1.updateMoney();
         System.out.println(player1 + "\n");
         System.out.println("");
         System.out.println("--------END TEST--------\n");
@@ -82,7 +80,7 @@ public class Player {
         System.out.println("Testing 3: Testing getters...\n");
         System.out.println(player1);
         System.out.println("getName(): " + player1.getName() + "\n"
-                            + "getScore(): " +  player1.getScore() + "\n"
+                            + "getMoney(): " +  player1.getMoney() + "\n"
                             + "getHand(): " + player1.getHand());
         System.out.println("");
         System.out.println("--------END TEST--------\n");
@@ -93,20 +91,20 @@ public class Player {
         player1.setName("Joe");
         Hand testHand = new Hand();
         player1.setHand(testHand);
-        player1.setScore(0);
+        player1.setMoney(0);
         System.out.println("");
         System.out.println("Reset hand & change name...\n");
         System.out.println(player1);
         System.out.println("");
         System.out.println("Add some new cards..\n");
         testHand.add(new Card(Card.Face.Ten, "Clovers", null, null));
-        player1.updateScore();
+        player1.updateMoney();
         System.out.println(player1);
         testHand.add(new Card(Card.Face.Five, "Hearts", null, null));
-        player1.updateScore();
+        player1.updateMoney();
         System.out.println(player1);
         testHand.add(new Card(Card.Face.Two, "Spades", null, null));
-        player1.updateScore();
+        player1.updateMoney();
         System.out.println(player1);
         System.out.println("");
         System.out.println("--------END TEST--------\n");

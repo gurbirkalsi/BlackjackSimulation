@@ -13,7 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, ViewSwitcher.ViewFactory {
@@ -24,20 +27,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageSwitcher dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5;
     private ImageSwitcher playerCard1, playerCard2, playerCard3, playerCard4, playerCard5;
     private ImageSwitcher splitCard1, splitCard2, splitCard3, splitCard4, splitCard5;
-    private Button placeBet, hit, stand, surrender, challenge;
+    private Button placeBet, hit, stand;
     private SeekBar betAmount;
-    static final String[] challengeString = new String[3];
 
-    private int betCoinAmount = 0;
+    private ArrayList<ImageSwitcher> dealerHandImages;
+    private ArrayList<ImageSwitcher> playerHandImages;
 
+    //Game variables
+    Deck gameDeck;
+    Player player;
+    Hand playerHand;
+    Player dealer;
+    Hand dealerHand;
+    static int nMoney = 0;
+    int nBet = 0;
+    int nDealerScore = 0, nPlayerScore = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         initializeVariables();
         setGameImages();
+        nMoney = 500;
+        money.setText("$ " + nMoney);
+        betAmount.setMax(nMoney);
 
     }
 
@@ -79,11 +95,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dealerCard4 = (ImageSwitcher) findViewById(R.id.ivDealerCard4);
         dealerCard5 = (ImageSwitcher) findViewById(R.id.ivDealerCard5);
 
+        dealerHandImages = new ArrayList<ImageSwitcher>() {{
+
+            add(dealerCard1);
+            add(dealerCard2);
+            add(dealerCard3);
+            add(dealerCard4);
+            add(dealerCard5);
+
+        }};
+
         playerCard1 = (ImageSwitcher) findViewById(R.id.ivYourCard1);
         playerCard2 = (ImageSwitcher) findViewById(R.id.ivYourCard2);
         playerCard3 = (ImageSwitcher) findViewById(R.id.ivYourCard3);
         playerCard4 = (ImageSwitcher) findViewById(R.id.ivYourCard4);
         playerCard5 = (ImageSwitcher) findViewById(R.id.ivYourCard5);
+
+        playerHandImages = new ArrayList<ImageSwitcher>() {{
+
+            add(playerCard1);
+            add(playerCard2);
+            add(playerCard3);
+            add(playerCard4);
+            add(playerCard5);
+
+        }};
 
         splitCard1 = (ImageSwitcher) findViewById(R.id.ivSplitCard1);
         splitCard2 = (ImageSwitcher) findViewById(R.id.ivSplitCard2);
@@ -93,13 +129,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         hit = (Button) findViewById(R.id.btnHit);
         stand = (Button) findViewById(R.id.btnStand);
-        surrender = (Button) findViewById(R.id.btnSurrender);
         placeBet = (Button) findViewById(R.id.btnPlaceBet);
         betAmount = (SeekBar) findViewById(R.id.sbBetAmount);
         betAmount.setOnSeekBarChangeListener(this);
 
+        placeBet.setOnClickListener(this);
+        hit.setOnClickListener(this);
+        stand.setOnClickListener(this);
+
+        gameDeck = new Deck();
+        gameDeck.shuffleDeck();
+        player = new Player("Player");
+        playerHand = new Hand();
+        dealer = new Player("Dealer");
+        dealerHand = new Hand();
+
     }
 
+    /**
+     * Initializes all ImageSwitcher elements and places default card images inside.
+     */
     private void setGameImages() {
 
         dealerCard1.setFactory(this);
@@ -198,6 +247,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnPlaceBet:
+
+                if (nBet > 0) {
+                    nMoney -= nBet;
+                    money.setText(String.valueOf(nMoney));
+                    gameStart();
+                }
+
+                break;
+
+            case R.id.btnHit:
+
+                playerTurn();
+
+                if (nPlayerScore > 21) {
+                    Toast.makeText(MainActivity.this, "You Lose!", Toast.LENGTH_SHORT).show();
+                    if (thread.getState() == Thread.State.NEW)
+                    {
+                        thread.start();
+                    }
+                }
+
+                if (playerHand.getTopCard().getFace().getCardValue() >= 5 && nPlayerScore < 22) {
+                    Toast.makeText(MainActivity.this, "You Lose!", Toast.LENGTH_SHORT).show();
+                    if (thread.getState() == Thread.State.NEW)
+                    {
+                        thread.start();
+                    }
+                }
+
+                break;
+
+            case R.id.btnStand:
+
+                while (nDealerScore < 17 && nDealerScore <= nPlayerScore &&  dealerHand.getTopCard().getFace().getCardValue() < 5) {
+                    dealerTurn();
+                }
+
+                if (nDealerScore > 21) {
+                    Toast.makeText(MainActivity.this, "You Won!", Toast.LENGTH_SHORT).show();
+                    if (thread.getState() == Thread.State.NEW)
+                    {
+                        thread.start();
+                    }
+
+                } else {
+
+                    checkWin();
+
+                }
+
+                dealerTurn();
+
+                if (dealerHand.getTopCard().getFace().getCardValue() >= 5) {
+                    checkWin();
+                }
+
+                break;
+
+            default:
+
+                break;
+
+        }
 
     }
 
@@ -210,8 +324,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
-        betCoinAmount = i;
-        bet.setText("Bet: $ " + betCoinAmount);
+        nBet = i;
+        bet.setText("Bet: $ " + nBet);
 
     }
 
@@ -233,4 +347,184 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 RadioGroup.LayoutParams.FILL_PARENT, RadioGroup.LayoutParams.FILL_PARENT));
         return iView;
     }
+
+    /**
+     * First round of the blackjack game.
+     */
+    private void gameStart() {
+
+        //Dealer actions
+        dealerTurn();
+
+        //Player actions
+        playerTurn();
+        playerTurn();
+
+        //Check for blackjack
+        if (nPlayerScore == 21) {
+            if ((playerHand.getEntry(0).equals('A') &&  playerHand.getEntry(1).equals('J'))
+                    || ((playerHand.getEntry(0).equals('J') &&  playerHand.getEntry(1).equals('A')))) {
+                Toast.makeText(MainActivity.this, "You hit BLACKJACK!",
+                        Toast.LENGTH_SHORT).show();
+                if (thread.getState() == Thread.State.NEW)
+                {
+                    thread.start();
+                }
+            }
+        }
+    }
+
+    /**
+     * Dealer turn involving dealer drawing from deck, and game images switching.
+     */
+    private void dealerTurn() {
+
+        //Dealer actions
+        Card dealerDrawnCard = (Card) gameDeck.removeTop();
+        dealerHand.add(dealerDrawnCard);
+        switchGameImages(dealerDrawnCard.getFace().getCardValue(), dealerDrawnCard.getSuit(), dealerHandImages.get(dealerHand.getLength() - 1));
+        nDealerScore += dealerDrawnCard.getFace().getCardValue();
+        dealerScore.setText(String.valueOf(nDealerScore));
+
+    }
+
+    /**
+     * Player turn involving player drawing from deck, and game images switching.
+     */
+    private void playerTurn() {
+        Card playerDrawnCard = (Card) gameDeck.removeTop();
+        playerHand.add(playerDrawnCard);
+        switchGameImages(playerDrawnCard.getFace().getCardValue(), playerDrawnCard.getSuit(), playerHandImages.get(playerHand.getLength() - 1));
+        nPlayerScore += playerDrawnCard.getFace().getCardValue();
+        yourScore.setText(String.valueOf(nPlayerScore));
+
+    }
+
+    /**
+     * Handlers to check current score to see if there is a win.
+     */
+    public void checkWin() {
+        if (nDealerScore > nPlayerScore) {
+            Toast.makeText(MainActivity.this, "You Lose!", Toast.LENGTH_SHORT).show();
+            if (thread.getState() == Thread.State.NEW)
+            {
+                thread.start();
+            }
+
+        } else if (nPlayerScore > nDealerScore) {
+            Toast.makeText(MainActivity.this, "You Win!", Toast.LENGTH_SHORT).show();
+            if (thread.getState() == Thread.State.NEW)
+            {
+                thread.start();
+            }
+
+        } else {
+            nMoney += nBet;
+            nBet = 0;
+            Toast.makeText(MainActivity.this, "Draw!",
+                    Toast.LENGTH_SHORT).show();
+            if (thread.getState() == Thread.State.NEW)
+            {
+                thread.start();
+            }
+        }
+    }
+
+    /**
+     * Switch game images with new cardNumber and cardSuit information.
+     */
+    private void switchGameImages(int cardNumber, String cardSuit, ImageSwitcher imageView) {
+
+        if (cardSuit.equals("Hearts")) {
+
+            switch (cardNumber) {
+                case 2: imageView.setImageResource(R.drawable.h2); break;
+                case 3: imageView.setImageResource(R.drawable.h3); break;
+                case 4: imageView.setImageResource(R.drawable.h4); break;
+                case 5: imageView.setImageResource(R.drawable.h5); break;
+                case 6: imageView.setImageResource(R.drawable.h6); break;
+                case 7: imageView.setImageResource(R.drawable.h7); break;
+                case 8: imageView.setImageResource(R.drawable.h8); break;
+                case 9: imageView.setImageResource(R.drawable.h9); break;
+                case 10: imageView.setImageResource(R.drawable.h10); break;
+                case 11: imageView.setImageResource(R.drawable.hj); break;
+                case 12: imageView.setImageResource(R.drawable.hq); break;
+                case 13: imageView.setImageResource(R.drawable.hk); break;
+                case 14: imageView.setImageResource(R.drawable.h1); break;
+                default: break;
+            }
+
+        } else if (cardSuit.equals("Diamonds")) {
+
+            switch (cardNumber) {
+                case 2: imageView.setImageResource(R.drawable.d2); break;
+                case 3: imageView.setImageResource(R.drawable.d3); break;
+                case 4: imageView.setImageResource(R.drawable.d4); break;
+                case 5: imageView.setImageResource(R.drawable.d5); break;
+                case 6: imageView.setImageResource(R.drawable.d6); break;
+                case 7: imageView.setImageResource(R.drawable.d7); break;
+                case 8: imageView.setImageResource(R.drawable.d8); break;
+                case 9: imageView.setImageResource(R.drawable.d9); break;
+                case 10: imageView.setImageResource(R.drawable.d10); break;
+                case 11: imageView.setImageResource(R.drawable.dj); break;
+                case 12: imageView.setImageResource(R.drawable.dq); break;
+                case 13: imageView.setImageResource(R.drawable.dk); break;
+                case 14: imageView.setImageResource(R.drawable.d1); break;
+                default: break;
+            }
+
+        } else if (cardSuit.equals("Spades")) {
+            
+            switch (cardNumber) {
+                case 2: imageView.setImageResource(R.drawable.s2); break;
+                case 3: imageView.setImageResource(R.drawable.s3); break;
+                case 4: imageView.setImageResource(R.drawable.s4); break;
+                case 5: imageView.setImageResource(R.drawable.s5); break;
+                case 6: imageView.setImageResource(R.drawable.s6); break;
+                case 7: imageView.setImageResource(R.drawable.s7); break;
+                case 8: imageView.setImageResource(R.drawable.s8); break;
+                case 9: imageView.setImageResource(R.drawable.s9); break;
+                case 10: imageView.setImageResource(R.drawable.s10); break;
+                case 11: imageView.setImageResource(R.drawable.sj); break;
+                case 12: imageView.setImageResource(R.drawable.sq); break;
+                case 13: imageView.setImageResource(R.drawable.sk); break;
+                case 14: imageView.setImageResource(R.drawable.s1); break;
+                default: break;
+            }
+
+        } else if (cardSuit.equals("Clovers")) {
+
+            switch (cardNumber) {
+                case 2: imageView.setImageResource(R.drawable.c2); break;
+                case 3: imageView.setImageResource(R.drawable.c3); break;
+                case 4: imageView.setImageResource(R.drawable.c4); break;
+                case 5: imageView.setImageResource(R.drawable.c5); break;
+                case 6: imageView.setImageResource(R.drawable.c6); break;
+                case 7: imageView.setImageResource(R.drawable.c7); break;
+                case 8: imageView.setImageResource(R.drawable.c8); break;
+                case 9: imageView.setImageResource(R.drawable.c9); break;
+                case 10: imageView.setImageResource(R.drawable.c10); break;
+                case 11: imageView.setImageResource(R.drawable.cj); break;
+                case 12: imageView.setImageResource(R.drawable.cq); break;
+                case 13: imageView.setImageResource(R.drawable.ck); break;
+                case 14: imageView.setImageResource(R.drawable.c1); break;
+                default: break;
+            }
+
+        }
+
+    }
+
+    Thread thread = new Thread(){
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(3500);
+                finish();
+                startActivity(getIntent());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }
