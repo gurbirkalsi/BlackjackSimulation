@@ -3,8 +3,10 @@ package gurbirkalsi.blackjacksimulation;
 import java.util.Random;
 
 /**
- * Created by jamessalvatore on 3/3/16.
- * asd
+ * COMP 2071
+ * Lab 3 - Data Structures
+ * Due Date: Tuesday, February 23rd.
+ * Group 13 - Josh Berger, Eli Kapetanopoulos, Giles Holmes, James Salvatore, Gurbir Kalsi
  */
 public class Deck extends Pile {
 

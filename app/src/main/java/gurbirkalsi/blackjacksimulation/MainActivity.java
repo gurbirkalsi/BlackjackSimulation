@@ -18,6 +18,11 @@ import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
 
+/* COMP 2071
+* Lab 3 - Data Structures
+* Due Date: Tuesday, February 23rd.
+* Group 13 - Josh Berger, Eli Kapetanopoulos, Giles Holmes, James Salvatore, Gurbir Kalsi */
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, ViewSwitcher.ViewFactory {
 

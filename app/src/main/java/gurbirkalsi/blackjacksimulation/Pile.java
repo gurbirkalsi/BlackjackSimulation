@@ -6,8 +6,10 @@ import java.util.NoSuchElementException;
 import gurbirkalsi.blackjacksimulation.Card;
 
 /**
- * Created by jamessalvatore on 3/2/16.
- * asd
+ * COMP 2071
+ * Lab 3 - Data Structures
+ * Due Date: Tuesday, February 23rd.
+ * Group 13 - Josh Berger, Eli Kapetanopoulos, Giles Holmes, James Salvatore, Gurbir Kalsi
  */
 
 public class Pile implements ListInterface{
